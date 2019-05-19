@@ -1,5 +1,15 @@
 const { Event, User } = require('../../models');
 const userResolver = require('./user');
+const { dateToString } = require('../../helpers/date');
+
+/*
+  Transform event to be sent back to the client via graphql.
+*/
+module.exports.transformEvent = event => ({
+  ...event._doc,
+  date: dateToString(event._doc.date),
+  creator: userResolver.user.bind(this, event._doc.creator),
+});
 
 /*
   Fetch a single event by id.
@@ -7,10 +17,7 @@ const userResolver = require('./user');
 module.exports.singleEvent = async (eventId) => {
   try {
     const event = await Event.findById(eventId);
-    return {
-      ...event._doc,
-      creator: userResolver.user.bind(this, event._doc.creator),
-    };
+    return module.exports.transformEvent(event);
   } catch (err) {
     throw err;
   }
@@ -20,21 +27,15 @@ module.exports.singleEvent = async (eventId) => {
   Fetch all events based on an array of ids.
 */
 module.exports.events = eventIds => Event.find({ _id: { $in: eventIds } })
-  .then(res => res.map(event => ({
-    ...event._doc,
-    date: new Date(event._doc.date).toISOString(),
-    creator: userResolver.user.bind(this, event._doc.creator),
-  }))).catch((err) => { throw err; });
+  .then(res => res.map(event => module.exports.transformEvent(event)))
+  .catch((err) => { throw err; });
 
 /*
   Get all events from the db.
 */
 module.exports.getEvents = () => Event.find()
-  .then(res => res.map(event => ({
-    ...event._doc,
-    date: new Date(event._doc.date).toISOString(),
-    creator: userResolver.user.bind(this, event._doc.creator),
-  }))).catch((err) => { throw err; });
+  .then(res => res.map(event => module.exports.transformEvent(event)))
+  .catch((err) => { throw err; });
 
 /*
   Create new event and assign it a creator.
@@ -54,11 +55,7 @@ module.exports.createEvent = (args) => {
       existingUser.createdEvents.push(res);
       await existingUser.save();
 
-      return {
-        ...res._doc,
-        date: new Date(res._doc.date).toISOString(),
-        creator: userResolver.user.bind(this, res.creator),
-      };
+      return module.exports.transformEvent(res);
     })
     .catch((err) => { throw err; });
 };
