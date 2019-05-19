@@ -12,7 +12,8 @@
   "dependencies": {
     "express": "^4.17.0",
     "express-graphql": "^0.8.0",
-    "graphql": "^14.3.0"
+    "graphql": "^14.3.0",
+    "mongoose": "^5.5.9"
   },
   "devDependencies": {
     "eslint": "^5.16.0",

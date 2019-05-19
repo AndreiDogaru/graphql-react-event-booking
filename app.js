@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -46,10 +47,10 @@ app.use('/graphql', graphqlHttp({
     createEvent: args => {
       const event = {
         _id: Math.random().toString(),
-        title: args.title,
-        description: args.description,
-        price: +args.price,
-        date: new Date().toISOString(),
+        title: args.eventInput.title,
+        description: args.eventInput.description,
+        price: +args.eventInput.price,
+        date: args.eventInput.date,
       }
       events.push(event);
       return event;
@@ -58,4 +59,11 @@ app.use('/graphql', graphqlHttp({
   graphiql: true
 }));
 
-app.listen(3000);
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-rdqrn.mongodb.net/test?retryWrites=true`,
+  { useNewUrlParser: true }
+).then(() => {
+  app.listen(3000);
+}).catch(err => {
+  console.log(err);
+});
