@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const { User } = require('../../models');
-const eventsResolver = require('./event');
+const eventResolver = require('./event');
 
 /*
   Get used by id.
@@ -9,7 +9,7 @@ const eventsResolver = require('./event');
 module.exports.user = userId => User.findById(userId)
   .then(res => ({
     ...res._doc,
-    createdEvents: eventsResolver.events.bind(this, res._doc.createdEvents),
+    createdEvents: eventResolver.events.bind(this, res._doc.createdEvents),
   })).catch((err) => { throw err; });
 
 /*

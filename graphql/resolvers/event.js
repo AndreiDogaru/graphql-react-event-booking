@@ -2,6 +2,21 @@ const { Event, User } = require('../../models');
 const userResolver = require('./user');
 
 /*
+  Fetch a single event by id.
+*/
+module.exports.singleEvent = async (eventId) => {
+  try {
+    const event = await Event.findById(eventId);
+    return {
+      ...event._doc,
+      creator: userResolver.user.bind(this, event._doc.creator),
+    };
+  } catch (err) {
+    throw err;
+  }
+};
+
+/*
   Fetch all events based on an array of ids.
 */
 module.exports.events = eventIds => Event.find({ _id: { $in: eventIds } })
