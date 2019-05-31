@@ -17,7 +17,9 @@ module.exports.transformBooking = booking => ({
 /*
   Get all bookings from the db.
 */
-module.exports.getBookings = async () => {
+module.exports.getBookings = async (req) => {
+  if (!req.isAuth) { throw new Error('Unauthenticated'); }
+
   try {
     const bookings = await Booking.find();
     return bookings.map(item => module.exports.transformBooking(item));
@@ -29,11 +31,13 @@ module.exports.getBookings = async () => {
 /*
   Create new booking.
 */
-module.exports.bookEvent = async (args) => {
+module.exports.bookEvent = async (args, req) => {
+  if (!req.isAuth) { throw new Error('Unauthenticated'); }
+
   try {
     const fetchedEvent = await Event.findOne({ _id: args.eventId });
     const booking = new Booking({
-      user: '5ce14cf33cdde3686009b212',
+      user: req.userId,
       event: fetchedEvent,
     });
     const result = await booking.save();
@@ -46,7 +50,9 @@ module.exports.bookEvent = async (args) => {
 /*
   Cancel an existing booking.
 */
-module.exports.cancelBooking = async (args) => {
+module.exports.cancelBooking = async (args, req) => {
+  if (!req.isAuth) { throw new Error('Unauthenticated'); }
+
   try {
     const booking = await Booking.findById(args.bookingId).populate('event');
     const event = await eventResolver.transformEvent(booking.event);
