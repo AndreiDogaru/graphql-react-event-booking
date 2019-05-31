@@ -4,4 +4,4 @@
 https://cloud.mongodb.com/v2/5ce13e34d5ec13618eccdeb2#clusters
 
 ### Youtube tutorial
-https://www.youtube.com/watch?v=JmFSGqbmzT4&list=PL55RiY5tL51rG1x02Yyj93iypUuHYXcB_&index=11
+https://www.youtube.com/watch?v=2rXtTi0Pn9E&list=PL55RiY5tL51rG1x02Yyj93iypUuHYXcB_&index=15
